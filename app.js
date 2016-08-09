@@ -14,9 +14,9 @@ app.use(express.static(__dirname + '/public'));
 
 // set the home page route
 app.get('/', function(req, res) {
-    res.send('Hello World!');
+    // res.send('Hello World!');
     // ejs render automatically looks in the views folder
-    // res.render('index');
+    res.render('pages/index');
 });
 
 app.listen(port, function() {
