@@ -1,8 +1,8 @@
 {
   "name": "pokemon-go",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "description": "Make for fun",
+  "main": "index.js",
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,6 +14,7 @@
     "pokemon-go-node-api": "^1.4.0"
   },
   "engines": {
-    "node": "5.9.1"
+    "node": "5.9.1",
+    "npm": "3.7.3"
   }
 }
