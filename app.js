@@ -1,4 +1,5 @@
 var express = require('express');
+var PokemonGO = require('pokemon-go-node-api')
 var app = express();
 
 app.get('/', function (req, res) {
