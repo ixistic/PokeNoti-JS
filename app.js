@@ -2,6 +2,8 @@
 var express = require('express');
 var PokemonGO = require('./poke.io.js');
 var app = express();
+var nodemailer = require('nodemailer');
+var router = express.Router();
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
@@ -15,6 +17,7 @@ app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
+app.use('/sayHello', router);
 
 // make express look in the public directory for assets (css/js/img)
 app.use(express.static(__dirname + '/public'));
@@ -38,8 +41,8 @@ app.post('/submit', function(request, response){
         altitude: 0,
       }
   };
-  var username1 = process.env.PGO_USERNAME || 'teeravipark1';
-  var password1 = process.env.PGO_PASSWORD || '55698248';
+  var username1 = process.env.PGO_USERNAME || '';
+  var password1 = process.env.PGO_PASSWORD || '';
   var provider1 = process.env.PGO_PROVIDER || 'google';
 
   b.init(username1, password1, location1, provider1, function(err) {
@@ -73,14 +76,40 @@ app.post('/submit', function(request, response){
                       if(hb.cells[i].NearbyPokemon[0]) {
                           //console.log(a.pokemonlist[0])
                           var pokemon = b.pokemonlist[parseInt(hb.cells[i].NearbyPokemon[0].PokedexNumber)-1];
-                          if(hb.cells[i].NearbyPokemon[0].DistanceMeters)
-                            console.log('[+] There is a ' + pokemon.name + ' at ' + hb.cells[i].NearbyPokemon[0].DistanceMeters.toString() + ' meters');
+                          if(hb.cells[i].NearbyPokemon[0]){
+                            console.log('[+] There is a ' + pokemon.name);
+
+                            var transporter = nodemailer.createTransport({
+                                service: 'Gmail',
+                                auth: {
+                                    user: '', // Your email id
+                                    pass: '' // Your password
+                                }
+                            });
+                            var text = 'There is a ' + pokemon.name;
+                            var mailOptions = {
+                                from: 'teeravipark1@gmail.com>', // sender address
+                                to: 'teeravipark@gmail.com', // list of receivers
+                                subject: 'Catch it', // Subject line
+                                text: text //, // plaintext body
+                                // html: '<b>Hello world ✔</b>' // You can choose to send an HTML body instead
+                            };
+                            transporter.sendMail(mailOptions, function(error, info){
+                              if(error){
+                                  console.log(error);
+                                  res.json({yo: 'error'});
+                              }else{
+                                  console.log('Message sent: ' + info.response);
+                                  res.json({yo: info.response});
+                              };
+                            });
+                          }
                           else
                             console.log('[-] Not found pokemon here.');
                       }
                   }
               });
-          }, 5000);
+          }, 60000);
 
       });
   });
